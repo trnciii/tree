@@ -4,28 +4,63 @@
 #include <glm/glm.hpp>
 #include "kdtree.h"
 #include "Random.h"
+#include "print.h"
 
-void printRule(){std::cout <<"----------  ----------  ----------"<<std::endl;}
+void split(std::vector<Node>& nodes, const std::vector<glm::vec3>::iterator begin, const std::vector<glm::vec3>::iterator end, const int axis){
+	std::sort(begin, end, [axis](glm::vec3 a, glm::vec3 b){return a[axis] < b[axis];});
+	
+	std::vector<glm::vec3>::iterator mid =  begin+(end-begin)/2; // split by count
 
-void print(const glm::vec3& a, const char* s = "\n"){
-	printf("%10.6f %10.6f %10.6f%s", a.x, a.y, a.z, s);
+	// print
+	std::cout <<"begin " <<&(*begin) <<", mid " <<&(*mid) <<", end " <<&(*end);
+	std::cout <<", " <<axis <<std::endl;
+	for(auto it=begin; it<end; it++) print(*it);
+	std::cout <<std::endl;
+
+
+	if(1 < mid-begin){
+		Node right(begin,mid);
+		
+		nodes.push_back(right);
+		split(nodes, begin, mid, right.axis());
+	}
+
+	if(1 < end-mid){
+		Node left(mid, end);
+
+		nodes.push_back(left);
+		split(nodes, mid, end, left.axis());
+	}
+
+	return;
 }
 
 int main(void){
-	RNG rand_local;
-	int size = 20;
+	RNG rng;
 	std::vector<glm::vec3> verts;
+	std::vector<Node> nodes;
 
-	for(int i=0; i<size; i++){
-		glm::vec3 v(rand_local.uniform(), rand_local.uniform(), rand_local.uniform());
+	for(int i=0; i<8; i++){
+		glm::vec3 v(rng.uniform(), rng.uniform(), rng.uniform());
 		verts.push_back(v);
 		print(v);
 	}
-
 	printRule();
+	
 	Node root(verts.begin(), verts.end());
-	print(root.min); // 0.013513   0.118296   0.034841
-	print(root.max); // 0.851034   0.995759   0.944129
+	nodes.push_back(root);
+	split(nodes, verts.begin(), verts.end(), root.axis());
+	printRule();
+
+	for(auto& n : nodes){
+		std::cout <<n.size;
+		print(n.min, " | ");
+		print(n.max);
+	}
+	printRule();
+
+	for(auto& v : verts) print(v);
+	printRule();
 
 	return 0;
 }

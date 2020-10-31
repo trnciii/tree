@@ -1,25 +1,28 @@
 #pragma
 
+#include <algorithm>
 #include <vector>
 #include <glm/glm.hpp>
+#include "print.h"
 
 struct Node{
 	glm::vec3 min;
 	glm::vec3 max;
 
-	Node* child_R;
-	Node* child_L;
+	uint32_t size;
 
-	Node(std::vector<glm::vec3>::iterator begin, std::vector<glm::vec3>::iterator end){
-		min = glm::vec3( 1e6, 1e6, 1e6);
-		max = glm::vec3(-1e6,-1e6,-1e6);
-
-		child_R = nullptr;
-		child_L = nullptr;
-
-		for(; begin<end; begin++){
-			min = glm::min(min, *begin);
-			max = glm::max(max, *begin);
+	Node(const std::vector<glm::vec3>::iterator begin,
+		const std::vector<glm::vec3>::iterator end)
+	:min(*begin), max(*begin), size(end-begin)
+	{
+		for(auto it=begin+1; it<end; it++){
+			min = glm::min(min, *it);
+			max = glm::max(max, *it);
 		}
+	}
+
+	int axis(){
+		glm::vec3 dim = max - min;
+		return (dim.y<dim.x && dim.z<dim.x)? 0 : ((dim.z<dim.y)? 1 : 2);
 	}
 };
