@@ -32,11 +32,7 @@ struct Tree{
 	std::vector<glm::vec3> verts;
 	std::vector<Node> nodes;
 
-	void build(){
-		Node root(verts.begin(), verts.end());
-		nodes.push_back(root);
-		split(verts.begin(), verts.end(), root.axis());
-	}
+	void build(){addNode(verts.begin(), verts.end());}
 
 	void split(const std::vector<glm::vec3>::iterator begin,
 		const std::vector<glm::vec3>::iterator end,
@@ -52,17 +48,15 @@ struct Tree{
 		std::cout <<std::endl;
 
 
-		if(1 < mid-begin){
-			Node right(begin,mid);
-			nodes.push_back(right);
-			split(begin, mid, right.axis());
-		}
-
-		if(1 < end-mid){
-			Node left(mid, end);
-			nodes.push_back(left);
-			split(mid, end, left.axis());
-		}
+		if(1 < mid-begin)addNode(begin, mid);
+		if(1 < end-mid)addNode(mid, end);
 	};
+
+	void addNode(const std::vector<glm::vec3>::iterator begin,
+		const std::vector<glm::vec3>::iterator end){
+		Node node(begin, end);
+		nodes.push_back(node);
+		split(begin, end, node.axis());
+	}
 
 };
