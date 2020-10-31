@@ -5,6 +5,8 @@
 #include "kdtree.h"
 #include "Random.h"
 
+void printRule(){std::cout <<"----------  ----------  ----------"<<std::endl;}
+
 void print(const glm::vec3& a, const char* s = "\n"){
 	printf("%10.6f %10.6f %10.6f%s", a.x, a.y, a.z, s);
 }
@@ -19,6 +21,11 @@ int main(void){
 		verts.push_back(v);
 		print(v);
 	}
+
+	printRule();
+	Node root(verts.begin(), verts.end());
+	print(root.min); // 0.013513   0.118296   0.034841
+	print(root.max); // 0.851034   0.995759   0.944129
 
 	return 0;
 }
