@@ -3,18 +3,17 @@
 #include "kdtree.h"
 #include "Random.h"
 #include "print.h"
+#include <chrono>
 
 int main(void){
 	RNG rng;
 	Tree tree;
 
 	std::cout <<"source" <<std::endl;
-	for(int i=0; i<8; i++){
+	for(int i=0; i<3; i++){
 		glm::vec3 v(rng.uniform(), rng.uniform(), rng.uniform());
 		tree.verts.push_back(v);
-		print(v);
 	}
-	printRule();
 	
 	std::cout <<"building the tree" <<std::endl;
 	tree.build();
@@ -22,19 +21,32 @@ int main(void){
 
 	std::cout <<"nodes" <<std::endl;
 	for(auto& n : tree.nodes){
-		std::cout <<n.size;
-		print(n.min, " | ");
+		printf("%6d | %6d |", n.size, n.next);
+		print(n.min, " |");
 		print(n.max);
 	}
 	printRule();
 
-	std::cout <<"verts" <<std::endl;
-	for(auto& v : tree.verts) print(v);
+
+	glm::vec3 p(0.58, 0.74, 0.26);
+	float r = 1;
+
+	auto t0 = std::chrono::high_resolution_clock::now();
+
+	std::cout <<"traversing tree" <<std::endl;
+	std::vector<glm::vec3> result_tree = tree.searchNN(p, r);
+	std::cout <<result_tree.size() <<" | ";
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+	std::cout <<std::chrono::duration<double, std::nano>(t1-t0).count() <<" ns" <<std::endl;
 	printRule();
 
-	std::cout <<"traversing" <<std::endl;
-	std::vector<glm::vec3> result = tree.traverse(glm::vec3(0.58, 0.74, 0.26), 0.5);
-	for(glm::vec3 v : result) print(v);
+	std::cout <<"traversing all" <<std::endl;
+	std::vector<glm::vec3> result_all = tree.searchNN_all(p, r);
+	std::cout <<result_all.size() <<" | ";
+
+	auto t2 = std::chrono::high_resolution_clock::now();
+	std::cout <<std::chrono::duration<double, std::nano>(t2-t0).count() <<" ns" <<std::endl;
 	printRule();
 
 	return 0;
