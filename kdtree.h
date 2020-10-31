@@ -35,6 +35,16 @@ struct Tree{
 
 	void build(){addNode(verts.begin(), verts.end());}
 
+	std::vector<glm::vec3> traverse(glm::vec3 p, float r){
+		std::vector<glm::vec3> result;
+		
+		for(glm::vec3 v : verts){
+			if(glm::length(p-v) < r) result.push_back(v);
+		}
+
+		return result;
+	}
+
 	void split(const std::vector<glm::vec3>::iterator begin,
 		const std::vector<glm::vec3>::iterator end,
 		const int axis)
