@@ -1,6 +1,4 @@
-#include <iomanip>
 #include <iostream>
-#include <vector>
 #include <glm/glm.hpp>
 #include "kdtree.h"
 #include "Random.h"

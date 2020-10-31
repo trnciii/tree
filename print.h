@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 void printRule(){std::cout <<"----------  ----------  ----------"<<std::endl;}
 
 void print(const glm::vec3& a, const char* s = "\n"){
