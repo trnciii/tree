@@ -38,7 +38,7 @@ int main(void){
 	printRule();
 
 	std::cout <<"traversing all" <<std::endl;
-	std::vector<glm::vec3> result_all = tree.searchNN_all(p, r);
+	std::vector<glm::vec3> result_all = tree.searchNN_checkAll(p, r);
 	std::cout <<result_all.size() <<" | ";
 
 	auto t2 = std::chrono::high_resolution_clock::now();

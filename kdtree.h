@@ -60,7 +60,7 @@ struct Tree{
 		return result;
 	}
 
-	std::vector<glm::vec3> searchNN_all(glm::vec3 p, float r){
+	std::vector<glm::vec3> searchNN_checkAll(glm::vec3 p, float r){
 		std::vector<glm::vec3> result;
 		
 		for(auto v : verts)
