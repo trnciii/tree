@@ -20,11 +20,7 @@ int main(void){
 	printRule();
 
 	std::cout <<"nodes" <<std::endl;
-	for(auto& n : tree.nodes){
-		printf("%6d | %6d |", n.size, n.next);
-		print(n.min, " |");
-		print(n.max);
-	}
+	for(auto& n : tree.nodes) print(n);
 	printRule();
 
 

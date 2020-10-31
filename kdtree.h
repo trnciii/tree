@@ -1,9 +1,8 @@
-#pragma
+#pragma once
 
 #include <algorithm>
 #include <vector>
 #include <glm/glm.hpp>
-#include "print.h"
 
 struct Tree{
 
