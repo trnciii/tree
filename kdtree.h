@@ -36,16 +36,44 @@ struct Tree{
 		}
 	};
 
+
+private:
+
 	std::vector<glm::vec3> verts;
 	std::vector<Node> nodes;
 	uint32_t nElements;
 
+	void split(const std::vector<glm::vec3>::iterator begin,
+		const std::vector<glm::vec3>::iterator end,
+		const int axis)
+	{
+		std::sort(begin, end, [axis](glm::vec3 a, glm::vec3 b){return a[axis] < b[axis];});	
+		std::vector<glm::vec3>::iterator mid =  begin+(end-begin)/2; // split by count
+
+		uint32_t p0 = nodes.size();
+		addNode(begin, mid);
+		
+		uint32_t p1 = nodes.size();
+		addNode(mid, end);
+
+		uint32_t p2 = nodes.size();
+	
+		nodes[p0].next = p1 - p0;
+		nodes[p1].next = p2 - p1;
+	};
+
+
+public:
+
 	void build(){
+		nodes.clear();
 		nElements = verts.size()/100 + 1;
 		addNode(verts.begin(), verts.end());
 	}
 
 	std::vector<glm::vec3> searchNN(glm::vec3 p, float r){
+		if(!hasTree()) return searchNN_checkAll(p,r);
+
 		std::vector<glm::vec3> result;
 
 		auto node = nodes.begin();
@@ -74,31 +102,27 @@ struct Tree{
 		return result;
 	}
 
-
-	void split(const std::vector<glm::vec3>::iterator begin,
-		const std::vector<glm::vec3>::iterator end,
-		const int axis)
-	{
-		std::sort(begin, end, [axis](glm::vec3 a, glm::vec3 b){return a[axis] < b[axis];});	
-		std::vector<glm::vec3>::iterator mid =  begin+(end-begin)/2; // split by count
-
-		uint32_t p0 = nodes.size();
-		addNode(begin, mid);
-		
-		uint32_t p1 = nodes.size();
-		addNode(mid, end);
-
-		uint32_t p2 = nodes.size();
-	
-		nodes[p0].next = p1 - p0;
-		nodes[p1].next = p2 - p1;
-	};
-
 	void addNode(const std::vector<glm::vec3>::iterator begin,
-		const std::vector<glm::vec3>::iterator end){
+		const std::vector<glm::vec3>::iterator end)
+	{
 		Node node(begin, end);
 		nodes.push_back(node);
 		if(nElements < node.size)split(begin, end, node.axis());
 	}
+
+	void copyElements(glm::vec3* const elements, uint32_t size){
+		std::vector<glm::vec3> v(elements, elements+size);
+		verts.swap(v);
+		nodes.clear();
+	}
+
+	void addElements(glm::vec3* const elements, uint32_t size){
+		std::vector<glm::vec3> v(elements, elements+size);
+		verts.reserve(verts.size()+size);
+		std::copy(v.begin(), v.end(), back_inserter(verts));
+		nodes.clear();
+	}
+
+	bool hasTree(){return 0 < nodes.size();}
 
 };
