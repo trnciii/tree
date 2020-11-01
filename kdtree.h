@@ -41,7 +41,7 @@ private:
 
 	std::vector<glm::vec3> verts;
 	std::vector<Node> nodes;
-	uint32_t nElements;
+	const uint32_t nElements = 1000;
 
 	void split(const std::vector<glm::vec3>::iterator verts_begin,
 		const std::vector<glm::vec3>::iterator verts_end,
@@ -77,8 +77,6 @@ public:
 		nodes.clear();
 
 		if(verts.size() < 1) return false;
-
-		nElements = verts.size()/100 + 1;
 		
 		Node node(verts.begin(), verts.end());
 		nodes.push_back(node);
