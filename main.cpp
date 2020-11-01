@@ -1,6 +1,6 @@
 #include <iostream>
-#include <glm/glm.hpp>
 #include "kdtree.h"
+#include <glm/glm.hpp>
 #include "Random.h"
 #include "print.h"
 #include <chrono>
@@ -11,20 +11,22 @@ int main(void){
 	Tree tree;
 
 	std::cout <<"source" <<std::endl;
-	for(int i=0; i<500000; i++){
+	for(int i=0; i<100; i++){
 		glm::vec3 v(rng.uniform(), rng.uniform(), rng.uniform());
 		verts.push_back(v);
 	}
 	
-	std::cout <<"building the tree" <<std::endl;
+	std::cout <<"building a tree" <<std::endl;
 	tree.copyElements(verts.data(), verts.size());
 	tree.build();
 	printRule();
 
-	// std::cout <<"nodes" <<std::endl;
-	// for(auto& n : tree.nodes) print(n);
-	// printRule();
-
+	std::cout <<"nodes" <<std::endl;
+	{
+		auto nodes = tree.getNodes();
+		for(auto& n : nodes) print(n);
+		printRule();
+	}
 
 	glm::vec3 p(0.58, 0.74, 0.26);
 	float r = 0.1;

@@ -133,4 +133,8 @@ public:
 
 	bool hasTree(){return 0 < nodes.size();}
 
+	std::vector<Node> getNodes(){return nodes;}
+
+	std::vector<glm::vec3> getElements(){return verts;}
+
 };
