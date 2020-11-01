@@ -38,8 +38,12 @@ struct Tree{
 
 	std::vector<glm::vec3> verts;
 	std::vector<Node> nodes;
+	uint32_t nElements;
 
-	void build(){addNode(verts.begin(), verts.end());}
+	void build(){
+		nElements = verts.size()/100 + 1;
+		addNode(verts.begin(), verts.end());
+	}
 
 	std::vector<glm::vec3> searchNN(glm::vec3 p, float r){
 		std::vector<glm::vec3> result;
@@ -47,7 +51,7 @@ struct Tree{
 		auto node = nodes.begin();
 		while(node < nodes.end()){
 			if(node->intersect(p, r)){
-				if(node->size < 5)
+				if(node->size <= nElements)
 					for(int i=0; i<node->size; i++)
 						if(glm::length(node->begin[i] - p) < r)
 							result.push_back(node->begin[i]);
@@ -79,10 +83,10 @@ struct Tree{
 		std::vector<glm::vec3>::iterator mid =  begin+(end-begin)/2; // split by count
 
 		uint32_t p0 = nodes.size();
-		if(2 < mid-begin)addNode(begin, mid);
+		addNode(begin, mid);
 		
 		uint32_t p1 = nodes.size();
-		if(2 < end-mid)addNode(mid, end);
+		addNode(mid, end);
 
 		uint32_t p2 = nodes.size();
 	
@@ -94,7 +98,7 @@ struct Tree{
 		const std::vector<glm::vec3>::iterator end){
 		Node node(begin, end);
 		nodes.push_back(node);
-		split(begin, end, node.axis());
+		if(nElements < node.size)split(begin, end, node.axis());
 	}
 
 };

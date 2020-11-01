@@ -10,7 +10,7 @@ int main(void){
 	Tree tree;
 
 	std::cout <<"source" <<std::endl;
-	for(int i=0; i<3; i++){
+	for(int i=0; i<5; i++){
 		glm::vec3 v(rng.uniform(), rng.uniform(), rng.uniform());
 		tree.verts.push_back(v);
 	}
@@ -19,9 +19,9 @@ int main(void){
 	tree.build();
 	printRule();
 
-	std::cout <<"nodes" <<std::endl;
-	for(auto& n : tree.nodes) print(n);
-	printRule();
+	// std::cout <<"nodes" <<std::endl;
+	// for(auto& n : tree.nodes) print(n);
+	// printRule();
 
 
 	glm::vec3 p(0.58, 0.74, 0.26);
