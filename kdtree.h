@@ -43,18 +43,26 @@ private:
 	std::vector<Node> nodes;
 	uint32_t nElements;
 
-	void split(const std::vector<glm::vec3>::iterator begin,
-		const std::vector<glm::vec3>::iterator end,
+	void split(const std::vector<glm::vec3>::iterator verts_begin,
+		const std::vector<glm::vec3>::iterator verts_end,
 		const int axis)
 	{
-		std::sort(begin, end, [axis](glm::vec3 a, glm::vec3 b){return a[axis] < b[axis];});	
-		std::vector<glm::vec3>::iterator mid =  begin+(end-begin)/2; // split by count
+		std::sort(verts_begin, verts_end, [axis](glm::vec3 a, glm::vec3 b){return a[axis] < b[axis];});	
+		std::vector<glm::vec3>::iterator verts_mid =  verts_begin+(verts_end-verts_begin)/2; // split by count
 
 		uint32_t p0 = nodes.size();
-		addNode(begin, mid);
+		{
+			Node node(verts_begin, verts_mid);
+			nodes.push_back(node);
+			if(nElements < node.size)split(verts_begin, verts_mid, node.axis());
+		}
 		
 		uint32_t p1 = nodes.size();
-		addNode(mid, end);
+		{
+			Node node(verts_mid, verts_end);
+			nodes.push_back(node);
+			if(nElements < node.size)split(verts_mid, verts_end, node.axis());
+		}
 
 		uint32_t p2 = nodes.size();
 	
@@ -65,10 +73,18 @@ private:
 
 public:
 
-	void build(){
+	bool build(){
 		nodes.clear();
+
+		if(verts.size() < 1) return false;
+
 		nElements = verts.size()/100 + 1;
-		addNode(verts.begin(), verts.end());
+		
+		Node node(verts.begin(), verts.end());
+		nodes.push_back(node);
+		if(nElements < node.size)split(verts.begin(), verts.end(), node.axis());
+		
+		return true;
 	}
 
 	std::vector<glm::vec3> searchNN(glm::vec3 p, float r){
@@ -100,14 +116,6 @@ public:
 				result.push_back(v);
 
 		return result;
-	}
-
-	void addNode(const std::vector<glm::vec3>::iterator begin,
-		const std::vector<glm::vec3>::iterator end)
-	{
-		Node node(begin, end);
-		nodes.push_back(node);
-		if(nElements < node.size)split(begin, end, node.axis());
 	}
 
 	void copyElements(glm::vec3* const elements, uint32_t size){
