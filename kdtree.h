@@ -36,6 +36,15 @@ struct Tree{
 		}
 	};
 
+	struct Result{
+		float distance;
+		glm::vec3 position;
+
+		Result(float d, glm::vec3 p):distance(d), position(p){}
+
+		static bool compareDistance(const Result& a, const Result& b){return a.distance < b.distance;}
+	};
+
 
 private:
 
@@ -85,18 +94,20 @@ public:
 		return true;
 	}
 
-	std::vector<glm::vec3> searchNN(glm::vec3 p, float r){
+	std::vector<Result> searchNN(glm::vec3 p, float r){
 		if(!hasTree()) return searchNN_checkAll(p,r);
 
-		std::vector<glm::vec3> result;
+		std::vector<Result> result;
 
 		auto node = nodes.begin();
 		while(node < nodes.end()){
 			if(node->intersect(p, r)){
 				if(node->size <= nElements)
-					for(int i=0; i<node->size; i++)
-						if(glm::length(node->begin[i] - p) < r)
-							result.push_back(node->begin[i]);
+					for(int i=0; i<node->size; i++){
+						float distance = glm::length(node->begin[i] - p);
+						if(distance < r)
+							result.push_back(Result(distance, node->begin[i]));
+					}
 
 				node++;
 			}
@@ -106,12 +117,14 @@ public:
 		return result;
 	}
 
-	std::vector<glm::vec3> searchNN_checkAll(glm::vec3 p, float r){
-		std::vector<glm::vec3> result;
+	std::vector<Result> searchNN_checkAll(glm::vec3 p, float r){
+		std::vector<Result> result;
 		
-		for(auto v : verts)
-			if(glm::length(v-p) < r)
-				result.push_back(v);
+		for(auto v : verts){
+			float distance = glm::length(v-p);
+			if(distance < r)
+				result.push_back(Result(distance, v));
+		}
 
 		return result;
 	}
